@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FileTraversalController } from './file-traversal.controller';
+import { ExplorerController } from './explorer.controller';
 
 describe('FileTraversal Controller', () => {
-  let controller: FileTraversalController;
+  let controller: ExplorerController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [FileTraversalController],
+      controllers: [ExplorerController],
     }).compile();
 
-    controller = module.get<FileTraversalController>(FileTraversalController);
+    controller = module.get<ExplorerController>(ExplorerController);
   });
 
   it('should be defined', () => {

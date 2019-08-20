@@ -1,17 +1,26 @@
 import { Module } from '@nestjs/common';
-import { SharedModule } from './shared/shared.module';
+import { resolve } from 'path';
+import { NedbModule } from '@hungtcs-box/nest-nedb';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { ConfigModule } from './modules/config/config.module';
 import { AppController } from './app.controller';
-import { FileTraversalModule } from './modules/file-traversal/file-traversal.module';
+import { ExplorerModule } from './modules/explorer/explorer.module';
 import { VideoStreamModule } from './modules/video-stream/video-stream.module';
 
 @Module({
   imports: [
-    SharedModule,
+    AuthModule,
+    UsersModule,
+    ConfigModule,
+    ExplorerModule,
     VideoStreamModule,
-    FileTraversalModule,
+    NedbModule.forRoot(`${ resolve(__dirname, '../dbs') }`),
   ],
   providers: [],
-  controllers: [AppController],
+  controllers: [
+    AppController,
+  ],
 })
 export class AppModule {
 
