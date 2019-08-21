@@ -12,9 +12,13 @@ export class ConfigService {
   private configurationPaths = [
     resolve(__dirname, '../../../../config', 'config.json5'),
     resolve(__dirname, '../../../../config', 'config.json'),
-    '/etc/file-explorer-service/config.json5',
-    '/etc/file-explorer-service/config.json',
+    // '/etc/file-explorer-service/config.json5',
+    // '/etc/file-explorer-service/config.json',
   ];
+
+  get auth() {
+    return this.configuration.auth;
+  }
 
   get explorer() {
     return this.configuration.explorer;

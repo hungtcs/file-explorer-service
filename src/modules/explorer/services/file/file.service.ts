@@ -1,9 +1,9 @@
 import trash from 'trash';
-import { basename, relative, resolve, join } from 'path';
 import { promisify } from 'util';
 import { FileCarte } from '../../models/public_api';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '../../../config/public_api';
+import { basename, relative, join } from 'path';
 import { stat, lstat, readlink, readdir, mkdir, exists, copyFile, rename } from 'fs';
 
 const promisifyStat = promisify(stat);
@@ -23,8 +23,8 @@ export class FileService {
 
   }
 
-  public async getFileStat(path: string, includeHiddenFiles: boolean) {
-    path = this.checkAndResolvePath(path);
+  public async getFileStat(originPath: string, includeHiddenFiles: boolean) {
+    const path = this.checkAndResolvePath(originPath);
     const fileCarte = new FileCarte();
     const fileStat = await promisifyStat(path);
     const fileLstat = await promisifyLstat(path);
@@ -33,9 +33,9 @@ export class FileService {
     const symbolicLink = fileLstat.isSymbolicLink();
     if(directory) {
       try {
-        fileCarte.filesCount = (await this.getFiles(path, includeHiddenFiles)).length;
+        fileCarte.filesCount = (await this.getFiles(originPath, includeHiddenFiles)).length;
       } catch(e) {
-
+        Logger.error(e);
       }
     }
     if(symbolicLink) {
@@ -91,7 +91,23 @@ export class FileService {
     }));
   }
 
-  private checkAndResolvePath(path: string) {
+  public async moveUploadedFiles(files: Array<any>, target: string) {
+    target = this.checkAndResolvePath(target);
+    return await Promise.all(files.map(async (file) => {
+      return await promisifyRename(file.path, `${ target }/${ file.originalname }`);
+    }));
+  }
+
+
+  /**
+   * 校验并转换路径到文件真实路径
+   *
+   * @author 鸿则<hungtcs@163.com>
+   * @param {string} path
+   * @returns
+   * @memberof FileService
+   */
+  public checkAndResolvePath(path: string) {
     path = join(this.configService.explorer.root, path);
     if(relative(this.configService.explorer.root, path).startsWith('../')) {
       throw new Error('invalid path');

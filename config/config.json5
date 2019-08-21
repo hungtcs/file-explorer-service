@@ -1,4 +1,12 @@
 {
+  auth: {
+    jwt: {
+      secret: "hungpass",
+      signOptions: {
+        expiresIn: "7days",
+      }
+    },
+  },
   explorer: {
     root: "/home/hung/Temp",
   },

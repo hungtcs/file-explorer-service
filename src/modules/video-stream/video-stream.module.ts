@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { VideoStreamController } from './video-stream/video-stream.controller';
+import { VideoStreamController } from './controllers/video-stream/video-stream.controller';
 
 @Module({
-  controllers: [VideoStreamController]
+  controllers: [
+    VideoStreamController,
+  ],
 })
 export class VideoStreamModule {
 
