@@ -31,7 +31,8 @@ export class AuthService {
   }
 
   public async getToken(user: UserModel) {
-    return this.jwtService.sign({ ...classToPlain(user) });
+    const { password, passwordHash, ...shared } = user;
+    return this.jwtService.sign({ ...shared });
   }
 
 }

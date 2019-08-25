@@ -14,7 +14,6 @@ export class UserModel extends Model {
   @IsOptional()
   password?: string;
 
-  @Exclude({ toPlainOnly: true })
   @IsString()
   @IsNotEmpty()
   @IsOptional()

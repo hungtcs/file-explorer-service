@@ -2,7 +2,7 @@ import DataStore from 'nedb';
 import { promisify } from 'util';
 import { UserModel } from '../../models/user.model';
 import { Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, classToPlain } from 'class-transformer';
 import { PasswdService } from '../../../../shared/public_api';
 import { InjectDatastore } from '@hungtcs-box/nest-nedb';
 
@@ -17,7 +17,7 @@ export class UsersService {
 
   public async create(user: UserModel) {
     user.passwordHash = await this.passwdService.generateHash(user.password);
-    return await promisify<UserModel, UserModel>(this.dataStore.insert.bind(this.dataStore))(user);
+    return await promisify<UserModel, UserModel>(this.dataStore.insert.bind(this.dataStore))(classToPlain(user));
   }
 
   public async delete(id: string) {

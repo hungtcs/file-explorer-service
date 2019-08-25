@@ -41,7 +41,7 @@ export class UsersModule {
     const user = await usersService.findByUsername('admin');
     if(!user) {
       Logger.log(`creating admin user`);
-      await usersService.create({ username: 'admin', password: 'admin' });
+      await usersService.create(new UserModel({ username: 'admin', password: 'admin' }));
     }
     return usersService;
   }
