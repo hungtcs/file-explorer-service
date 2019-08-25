@@ -2,12 +2,20 @@ import { promisify } from 'util';
 import { Request, Response } from 'express';
 import { exists, stat, createReadStream } from 'fs';
 import { Controller, Get, Req, Res, Param, HttpStatus } from '@nestjs/common';
+import { join, relative } from 'path';
+import { ConfigService } from '../../../config/public_api';
 
 @Controller('video-stream')
 export class VideoStreamController {
 
+  constructor(
+      private configService: ConfigService) {
+
+  }
+
   @Get(':path')
   public async getVideoStream(@Req() request: Request, @Res() response: Response,@Param('path') path: string) {
+    path = this.checkAndResolvePath(path);
     if(!await promisify(exists)(path)) {
       response.status(HttpStatus.NOT_FOUND).json({ message: 'file not found' });
       return;
@@ -48,6 +56,22 @@ export class VideoStreamController {
         response.end();
       });
     }
+  }
+
+  /**
+   * 校验并转换路径到文件真实路径
+   *
+   * @author 鸿则<hungtcs@163.com>
+   * @param {string} path
+   * @returns
+   * @memberof FileService
+   */
+  public checkAndResolvePath(path: string) {
+    path = join(this.configService.explorer.root, path);
+    if(relative(this.configService.explorer.root, path).startsWith('../')) {
+      throw new Error('invalid path');
+    }
+    return path;
   }
 
 }
